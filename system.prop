@@ -13,7 +13,6 @@ vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.xiaomi.cameratest,com.x
 
 # Camera
 persist.vendor.camera.privapp.list=com.android.camera
-log.tag.CHIUSECASE=ERROR
 vendor.camera.sat.fallback.dist=40
 vendor.camera.sat.fallback.dist.d=10
 vendor.camera.sat.fallback.luxindex=330
@@ -136,7 +135,3 @@ persist.timed.enable=true
 
 # WiFi
 config.disable_rtt=true
-
-# Transcoding related property.
-debug.media.transcoding.codec_max_operating_rate_720P=240
-debug.media.transcoding.codec_max_operating_rate_1080P=120
