@@ -24,4 +24,23 @@
     <!-- 30 seconds for default screen timeout -->
     <integer name="def_screen_off_timeout">30000</integer>
 
+    <!-- Battery health -->
+    <string name="config_batCurCap">/sys/class/power_supply/bms/charge_counter</string>
+    <string name="config_batDesCap">/sys/class/power_supply/bms/charge_full_design</string>
+    <string name="config_batChargeCycle">/sys/class/power_supply/bms/cycle_count</string>
+    <bool name="config_supportBatteryHealth">true</bool>
+
+    <!-- Smart Charging -->
+    <bool name="config_supportSmartCharging">true</bool>
+
+    <bool name="config_show_refresh_rate_controls">false</bool>
+    <bool name="config_show_smooth_display">false</bool>
+    <bool name="config_show_touch_sensitivity">true</bool>
+     <!-- <string name="config_batCurCap"></string>
+     <string name="config_batDesCap"></string>
+     <string name="config_batChargeCycle"></string>
+     <string name="config_batHealth"></string>
+     <string name="config_batType"></string>
+     <bool name="config_supportBatteryHealth">true</bool> -->
+
 </resources>

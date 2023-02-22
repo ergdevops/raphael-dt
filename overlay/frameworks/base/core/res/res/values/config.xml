@@ -607,5 +607,24 @@
     <integer name="config_defaultRefreshRate">60</integer>
     <!-- The default peak refresh rate for a given device. Change this value if you want to allow
          for higher refresh rates to be automatically used out of the box -->
-    <integer name="config_defaultPeakRefreshRate">90</integer>
+    <integer name="config_defaultPeakRefreshRate">60</integer>
+    <bool name="config_supportDoubleTapWake">true</bool>
+    <bool name="config_enableSmartPixels">true</bool>
+    <string name="config_defaultWellbeingPackage">com.google.android.apps.wellbeing</string>
+    <string name="config_sysCPUTemp">/sys/class/thermal/thermal_zone0/temp</string>
+    <string name="config_sysBatteryTemp">/sys/class/power_supply/battery/temp</string>
+    <string name="config_sysGPUFreq">/sys/kernel/gpu/gpu_clock</string>
+    <string name="config_sysGPULoad">/sys/kernel/gpu/gpu_busy</string>
+    <integer name="config_sysCPUTempMultiplier">1</integer>
+    <integer name="config_sysBatteryTempMultiplier">1</integer>
+    <bool name="config_needCustomFODView">true</bool>
+    <bool name="config_supportsInDisplayFingerprint">true</bool>
+    <integer name="config_fingerprintSensorLocation">1</integer>
+
+    <!-- Fingerprint from a certified device against current platform SPL level -->
+    <string name="config_certifiedFingerprint" translatable="false">google/raven/raven:13/TQ1A.230105.002/9325679:user/release-keys</string>
+
+    <!-- Model from a certified device -->
+    <string name="config_certifiedModel" translatable="false">Pixel 6 Pro</string>
+
 </resources>
