@@ -21,7 +21,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 $(call inherit-product, device/xiaomi/raphael/device.mk)
 
 # Inherit some common Lineage stuff.
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+$(call inherit-product, vendor/aicp/config/common_full_phone.mk)
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 2340
@@ -32,13 +32,9 @@ EXTRA_UDFPS_ANIMATIONS := true
 TARGET_HAS_UDFPS := true
 TARGET_ENABLE_BLUR := true
 TARGET_SUPPORTS_QUICK_TAP := true
-# AlphaDroid
-ALPHA_BUILD_TYPE := OFFICIAL
-ALPHA_MAINTAINER := OnettBoots
-WITH_GAPPS := true
 
 # Device identifier. This must come after all inclusions.
-PRODUCT_NAME := lineage_raphael
+PRODUCT_NAME := aicp_raphael
 PRODUCT_DEVICE := raphael
 PRODUCT_BRAND := Xiaomi
 PRODUCT_MODEL := MI 9T Pro
