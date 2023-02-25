@@ -20,8 +20,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_p.mk)
 # Inherit from raphael device
 $(call inherit-product, device/xiaomi/raphael/device.mk)
 
-# Inherit some common Lineage stuff.
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+# Inherit some common Bootleggers ROM stuff.
+$(call inherit-product, vendor/bootleggers/config/common_full_phone.mk)
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 2340
@@ -39,3 +39,20 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     PRODUCT_NAME="raphael"
 
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
+
+
+
+BOOTLEGGERS_BUILD_TYPE := Unshishufied
+# Maintainer Prop
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.bootleggers.maintainer=ergdev
+
+# Some Build Flags
+TARGET_BOOT_ANIMATION_RES := 1080
+TARGET_FACE_UNLOCK_SUPPORTED := true
+TARGET_USES_BLUR := false
+TARGET_USES_AOSP_CHARGER := true
+TARGET_INCLUDE_LIVE_WALLPAPERS := false
+TARGET_INCLUDE_STOCK_ARCORE := false
+TARGET_BOOTLEG_ARCH := arm64
+WITH_GAPPS := true

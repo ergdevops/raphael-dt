@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2015 The CyanogenMod Project
- *               2017-2018 The LineageOS Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.lineageos.settings.doze;
 
 import android.content.Context;
@@ -31,73 +14,91 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class PickupSensor implements SensorEventListener {
-    private static final boolean DEBUG = false;
     private static final String TAG = "PickupSensor";
+    private static final boolean DEBUG = false;
 
     private static final int MIN_PULSE_INTERVAL_MS = 2500;
-    private static final int MIN_WAKEUP_INTERVAL_MS = 1000;
-    private static final int WAKELOCK_TIMEOUT_MS = 300;
+    private static final int MIN_TIME_BETWEEN_SIGNS_MS = 500;
 
-    private PowerManager mPowerManager;
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private WakeLock mWakeLock;
-    private Context mContext;
-    private ExecutorService mExecutorService;
+    private final SensorManager mSensorManager;
+    private final Sensor mSensor;
+    private final PowerManager mPowerManager;
+    private final WakeLock mWakeLock;
+
+    private final ExecutorService mExecutorService;
 
     private long mEntryTimestamp;
 
+    private Future<?> mPendingSensingTask;
+    private boolean mSensing;
+
     public PickupSensor(Context context) {
-        mContext = context;
-        mPowerManager = mContext.getSystemService(PowerManager.class);
-        mSensorManager = mContext.getSystemService(SensorManager.class);
-        mSensor = DozeUtils.getSensor(mSensorManager, "xiaomi.sensor.pickup");
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mPowerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PickupSensor");
+
         mExecutorService = Executors.newSingleThreadExecutor();
     }
 
-    private Future<?> submit(Runnable runnable) { return mExecutorService.submit(runnable); }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (DEBUG)
-            Log.d(TAG, "Got sensor event: " + event.values[0]);
+        float z = event.values[2];
 
-        long delta = SystemClock.elapsedRealtime() - mEntryTimestamp;
-        if (delta < MIN_PULSE_INTERVAL_MS) {
-            return;
-        }
-
-        mEntryTimestamp = SystemClock.elapsedRealtime();
-
-        if (event.values[0] == 1) {
-            if (DozeUtils.isPickUpSetToWake(mContext)) {
-                mWakeLock.acquire(WAKELOCK_TIMEOUT_MS);
-                mPowerManager.wakeUpWithProximityCheck(SystemClock.uptimeMillis(),
-                        PowerManager.WAKE_REASON_GESTURE, TAG);
-            } else {
-                DozeUtils.launchDozePulse(mContext);
+        // Check if the device is facing up and the z value is positive
+        if (z >= SensorManager.GRAVITY_EARTH * 0.5f) {
+            final long now = SystemClock.uptimeMillis();
+            if (now - mEntryTimestamp >= MIN_TIME_BETWEEN_SIGNS_MS) {
+                mEntryTimestamp = now;
+                pulse();
             }
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        /* Empty */
+        // No-op
     }
 
-    protected void enable() {
-        if (DEBUG)
-            Log.d(TAG, "Enabling");
-        submit(() -> {
+    public void enable() {
+        if (!mSensing) {
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            mEntryTimestamp = SystemClock.elapsedRealtime();
-        });
+            mSensing = true;
+        }
     }
 
-    protected void disable() {
-        if (DEBUG)
-            Log.d(TAG, "Disabling");
-        submit(() -> { mSensorManager.unregisterListener(this, mSensor); });
+    public void disable() {
+        if (mSensing) {
+            mSensorManager.unregisterListener(this);
+            mSensing = false;
+        }
+    }
+
+    private void pulse() {
+        if (DEBUG) {
+            Log.d(TAG, "pulse");
+        }
+
+        if (mWakeLock.isHeld()) {
+            return;
+        }
+
+        mWakeLock.acquire();
+
+        if (mPendingSensingTask != null) {
+            mPendingSensingTask.cancel(false);
+        }
+
+        mPendingSensingTask = mExecutorService.submit(() -> {
+            try {
+                Thread.sleep(MIN_PULSE_INTERVAL_MS);
+            } catch (InterruptedException e) {
+                // Ignore
+            }
+
+            if (mWakeLock.isHeld()) {
+                mWakeLock.release();
+            }
+        });
     }
 }
