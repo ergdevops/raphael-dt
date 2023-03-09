@@ -13,9 +13,9 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/derp_raphael.mk
+    $(LOCAL_DIR)/spiceos_raphael.mk
 
 COMMON_LUNCH_CHOICES := \
-    derp_raphael-user \
-    derp_raphael-userdebug \
-    derp_raphael-eng
+    spiceos_raphael-user \
+    spiceos_raphael-userdebug \
+    spiceos_raphael-eng
