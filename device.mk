@@ -44,7 +44,7 @@ PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH)
 
 PRODUCT_VENDOR_KERNEL_HEADERS := \
-    device/xiaomi/raphael-kernel/sm8150/kernel-headers
+    kernel/xiaomi/raphael/include
 
 # Hardware
 PRODUCT_COPY_FILES += \
